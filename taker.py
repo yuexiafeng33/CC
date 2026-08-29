@@ -14,4 +14,5 @@ if __name__ == "__main__":
     while not rospy.is_shutdown():
         msg.data = "cc"
         pub.publish(msg)
+        rospy.loginfo("我发布的数据：%s",msg.data)
         rate.sleep()
