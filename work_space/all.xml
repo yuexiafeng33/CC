@@ -1,0 +1,13 @@
+<launch>
+
+    <node pkg="cc"
+          type="taker.py"
+          name="taker"
+          output="screen" />
+
+    <node pkg="cc"
+          type="listener.py"
+          name="listener"
+          output="screen" />
+
+</launch>
