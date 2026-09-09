@@ -1,0 +1,133 @@
+<robot name="mycar" xmlns:xacro="http://wiki.ros.org/xacro">
+
+    <xacro:property name="footprint_radius" value="0.001" />
+    <xacro:property name="link_radius" value="0.1" />
+    <xacro:property name="link_length" value="0.08" />
+    <xacro:property name="link_lid" value="0.015" />
+    <xacro:property name="link_joint_z" value="${link_length / 2 + link_lid}" />
+    <xacro:property name="wheel_radius" value="0.0325" />
+    <xacro:property name="wheel_length" value="0.015" />
+    <xacro:property name="PI" value="3.1415927" />
+    <xacro:property name="wheel_joint_y" value="0.1" />
+    <xacro:property name="wheel_joint_z" value="-0.0225" />
+    <xacro:property name="ball_radius" value="0.0075" />
+    <xacro:property name="ball_joint_x" value="0.08" />
+    <xacro:property name="ball_joint_z" value="-0.0475" />
+    <xacro:property name="camera_x" value="0.05" />
+    <xacro:property name="camera_y" value="0.03" />
+    <xacro:property name="camera_z" value="0.02" />
+
+    <link name="base_footprint">
+        <visual>
+            <geometry>
+                <sphere radius="${footprint_radius}" />
+            </geometry>
+        </visual>
+     </link>
+     <link name="camera">
+        <visual>
+            <geometry>
+                <box size="${camera_x} ${camera_y} ${camera_z}" />
+            </geometry>
+            <origin xyz="0 0 0" rpy="1.5708 0 1.5708" />
+            <material name="camera_color">
+                <color rgba="1 1 0 0.5" />
+            </material>
+        </visual>
+     </link>
+     <link name="leida">
+        <visual>
+            <geometry>
+                <box size="0.03 0.03 0.03" />
+            </geometry>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <material name="leida_color">
+                <color rgba="1 1 1 0.5" />
+            </material>
+        </visual>
+     </link>
+     <link name="ganzi">
+        <visual>
+            <geometry>
+                <cylinder radius="0.007" length="0.15" />
+            </geometry>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <material name="ganzi_color">
+                <color rgba="0 1 1 0.5" />
+            </material>
+        </visual>
+    </link>
+     <link name="base_link">
+        <visual>
+            <geometry>
+                <cylinder radius="${link_radius}" length="${link_length}" />
+            </geometry>
+        </visual>
+     </link>
+     <xacro:macro name="wheel" params="name flag">
+     <link name="${name}_wheel">
+        <visual>
+            <geometry>
+                <cylinder radius="${wheel_radius}" length="${wheel_length}" />
+            </geometry>
+            <origin xyz="0 0 0" rpy="${PI / 2} 0 0" />
+            <material name="left_wheel_color">
+                <color rgba="0 1 0 0.5" />
+            </material>
+        </visual>
+     </link>
+     <joint name="link2${name}" type="continuous">
+        <parent link="base_link" />
+        <child link="${name}_wheel" />
+        <origin xyz="0 ${wheel_joint_y * flag} ${wheel_joint_z}" rpy="0 0 0" />
+        <axis xyz="0 1 0" />
+    </joint>
+     </xacro:macro>
+     <xacro:macro name="ball" params="name flag">
+     <link name="${name}_ball">
+        <visual>
+            <geometry>
+                <sphere radius="${ball_radius}" />
+            </geometry>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <material name="ball_colour">
+                <color rgba="0 0 1 0.5" />
+            </material>
+        </visual>
+     </link>
+     <joint name="link2${name}" type="continuous">
+        <parent link="base_link" />
+        <child link="${name}_ball" />
+        <origin xyz="${ball_joint_x * flag} 0 ${ball_joint_z}" rpy="0 0 0" />
+        <axis xyz="0 1 0" />
+    </joint>
+     </xacro:macro>
+
+     <joint name="footprint2link" type="fixed">
+        <parent link="base_footprint" />
+        <child link="base_link" />
+        <origin xyz="0 0 ${link_joint_z}" rpy="0 0 0" />
+    </joint>
+    <joint name="link2camera" type="continuous">
+        <parent link="base_link" />
+        <child link="camera" />
+        <origin xyz="0.05 0 0.055" rpy="0 0 0" />
+        <axis xyz="0 0 1" />
+    </joint>
+    <joint name="link2ganzi" type="fixed">
+        <parent link="base_link" />
+        <child link="ganzi" />
+        <origin xyz="0 0 0.0475" rpy="0 0 0" />
+    </joint>
+    <joint name="ganzi2leida" type="fixed">
+        <parent link="ganzi" />
+        <child link="leida" />
+        <origin xyz="0 0 0.09" rpy="0 0 0" />
+    </joint>
+
+    <xacro:wheel name="left" flag="-1" />
+    <xacro:wheel name="right" flag="1" />
+    <xacro:ball name="fornt" flag="1" />
+    <xacro:ball name="back" flag="-1" />
+
+</robot>
